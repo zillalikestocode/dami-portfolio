@@ -1,0 +1,38 @@
+---
+import "../styles/global.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <body class="h-screen flex flex-col items-center justify-center bg-[#F7F7F7]">
+    <div class="sm:w-150 p-7">
+      <img src="/dami.svg" class="w-11 h-11 mb-5" />
+      <div class="space-y-2.5">
+        <p class="text-xs leading-5">
+          Dami is a multidisciplinary product designer, finding innovative ways
+          to connect user, market, and product through thoughtful research and
+          design strategies.
+        </p>
+
+        <p class="text-xs leading-5">
+          Currently designing at <a>Mercurie</a> Previously <a
+            >Tempo Labs (YC S23)</a
+          > I also founded <a>Tabs</a> a curated platform platform for discovering
+          and learning from African digital products.
+        </p>
+
+        <p class="text-xs text-black/50 leading-5">
+          This portfolio is currently under construction—while that’s happening,
+          you can view my previous portfolio, find me on <a href="!text-black/50 underline">LinkedIn</a>, <a href="">X</a> or say
+          <a href="mailto:hey@damiojetunji.com">hey@damiojetunji.com</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
