@@ -1,0 +1,93 @@
+---
+import CaseStudyLayout from "../../layouts/case-study-layout.astro";
+import {
+  getCaseStudyBySlug,
+  getAllCaseStudySlugs,
+} from "../../constants/case_studies";
+import PasswordGate from "../../components/PasswordGate";
+import CaseStudyContent from "../../components/CaseStudyContent.astro";
+import "../../styles/global.css";
+
+// Generate static paths for all case studies
+export function getStaticPaths() {
+  const slugs = getAllCaseStudySlugs();
+  return slugs.map((slug) => ({
+    params: { study: slug },
+  }));
+}
+
+const { study } = Astro.params;
+const caseStudy = getCaseStudyBySlug(study);
+
+// If case study not found, return 404
+if (!caseStudy) {
+  return Astro.redirect("/404");
+}
+
+// Extract text section titles for navigation
+const textSections = caseStudy.sections
+  .filter((section) => section.type === "text" && (section.showInNav !== false))
+  .map((section) => ({
+    title: section.title,
+    id: section.title.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and"),
+    scrollToTop: section.scrollToTop ?? false,
+  }));
+
+const hasPassword = !!caseStudy.password;
+const caseStudySlug = caseStudy.slug;
+const password = caseStudy.password || "";
+---
+
+<CaseStudyLayout
+  title={caseStudy.title}
+  headerTitle={caseStudy.pageTitle}
+  sections={textSections}
+>
+  <CaseStudyContent caseStudy={caseStudy} />
+  {hasPassword && (
+    <div
+      id="password-gate-overlay"
+      class="fixed inset-0 z-50 bg-background"
+      style="display: none;"
+    >
+      <PasswordGate correctPassword={password} client:load />
+    </div>
+  )}
+</CaseStudyLayout>
+
+{hasPassword && (
+  <script define:vars={{ caseStudySlug, password }}>
+    (function () {
+      const storageKey = `case-study-auth-${caseStudySlug}`;
+      const passwordGateOverlay = document.getElementById("password-gate-overlay");
+
+      function checkAuth() {
+        return localStorage.getItem(storageKey) === "true";
+      }
+
+      function showPasswordGate() {
+        if (passwordGateOverlay) {
+          passwordGateOverlay.style.display = "block";
+        }
+      }
+
+      function hidePasswordGate() {
+        if (passwordGateOverlay) {
+          passwordGateOverlay.style.display = "none";
+        }
+      }
+
+      function handleAuthenticated() {
+        localStorage.setItem(storageKey, "true");
+        hidePasswordGate();
+      }
+
+      if (checkAuth()) {
+        hidePasswordGate();
+      } else {
+        showPasswordGate();
+        window.addEventListener("password-authenticated", handleAuthenticated);
+      }
+    })();
+  </script>
+)}

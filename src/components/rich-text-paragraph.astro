@@ -1,0 +1,32 @@
+---
+import TextLink from "./ui/text_link.astro";
+import type { Paragraph, TextSegment } from "../constants/case_studies";
+
+interface Props {
+  paragraph: Paragraph;
+}
+
+const { paragraph } = Astro.props;
+
+const isObject = typeof paragraph === "object" && paragraph !== null && !Array.isArray(paragraph);
+const isHidden = isObject && "hidden" in paragraph && paragraph.hidden === true;
+const paragraphContent: string | TextSegment[] = isObject && "content" in paragraph 
+  ? paragraph.content 
+  : paragraph as string | TextSegment[];
+const isSimpleText = typeof paragraphContent === "string";
+const hiddenClass = isHidden ? "hidden sm:block" : "";
+---
+
+<p class={hiddenClass}>
+  {
+    isSimpleText
+      ? paragraphContent
+      : paragraphContent.map((segment: TextSegment) => {
+          if (segment.type === "text") {
+            return segment.content;
+          } else if (segment.type === "link") {
+            return <TextLink href={segment.href} text={segment.text} />;
+          }
+        })
+  }
+</p>

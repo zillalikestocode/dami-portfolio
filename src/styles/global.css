@@ -1,58 +1,178 @@
 @import "tailwindcss";
 
-/* Helvetica Font Family */
+/* PolySans Font Family (local files in ./fonts/) */
 @font-face {
-  font-family: "Helvetica";
-  src: url("./fonts/Helvetica-01.ttf") format("truetype");
+  font-family: "PolySans";
+  src: url("./fonts/polysanstrial-neutral.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Helvetica";
-  src: url("./fonts/Helvetica-Bold-02.ttf") format("truetype");
-  font-weight: 700;
+  font-family: "PolySans";
+  src: url("./fonts/polysanstrial-neutralmono.otf") format("opentype");
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Helvetica";
-  src: url("./fonts/Helvetica-Oblique-03.ttf") format("truetype");
+  font-family: "PolySans";
+  src: url("./fonts/polysanstrial-slimmono.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PolySans";
+  src: url("./fonts/polysanstrial-neutralwide.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PolySans";
+  src: url("./fonts/polysanstrial-slim.otf") format("opentype");
+  font-weight: 300;
+}
+
+/* Italic variants (if needed) */
+@font-face {
+  font-family: "PolySans";
+  src: url("./fonts/polysansitalictrial-neutralitalic.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Helvetica";
-  src: url("./fonts/Helvetica-BoldOblique-04.ttf") format("truetype");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
+  font-family: "Biro Script";
+  src: url("./fonts/Biro_Script.otf") format("opentype");
+  font-weight: 400;
 }
 
-@font-face {
-  font-family: "Helvetica";
-  src: url("./fonts/Helvetica-Light-05.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Helvetica";
-  src: url("./fonts/Helvetica-LightOblique-06.ttf") format("truetype");
-  font-weight: 300;
-  font-style: italic;
-  font-display: swap;
-}
-* {
-  font-family: "Helvetica";
-}
+/* Global default font stack */
 
 a {
-  color: #0062d5;
+  color: var(--color-link);
   letter-spacing: -0.09px;
+}
+
+@theme {
+  --color-primary: #ffffff;
+  --color-border: #00000010;
+  --color-link: #335cff;
+  --color-text: #5c5c5c;
+  --color-dark-text: #171717;
+  --color-background: #f7f7f7;
+  --color-inactive: #5c5c5c;
+  --color-soft: #a3a3a3;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@variant dark {
+  --color-background: #1c1c1c;
+  --color-primary: #171717;
+  --color-border: #ffffff1a;
+  --color-link: #97baff;
+  --color-text: #a3a3a3;
+  --color-dark-text: #ffffff;
+}
+
+@layer base {
+  html {
+    transition: background-color 0.3s ease;
+    scroll-behavior: smooth;
+  }
+
+  * {
+    font-family:
+      "PolySans",
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      "Helvetica Neue",
+      Arial,
+      sans-serif;
+    font-weight: 300;
+    line-height: 24px;
+    border-color: #00000010;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  body {
+    /* position: relative; */
+    @apply bg-background;
+  }
+
+  h1 {
+    color: var(--color-dark-text);
+    @apply text-[18px] font-semibold leading-6;
+  }
+
+  h2 {
+    color: var(--color-dark-text);
+    @apply text-[15px] font-semibold leading-6;
+  }
+
+  h3 {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16.8px;
+    letter-spacing: 1.2px;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 640px) {
+    h1 {
+      @apply text-[16px] font-semibold leading-6;
+    }
+  }
+
+  h6 {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-link);
+    font-family: "Biro Script";
+  }
+
+  h4 {
+    color: var(--color-dark-text);
+    @apply font-normal text-sm;
+  }
+
+  @media (max-width: 640px) {
+    h4 {
+      font-size: 13px;
+    }
+  }
+
+  p {
+    color: var(--color-text);
+    font-weight: 300;
+    opacity: 0;
+    font-size: 14px;
+    line-height: 24px;
+    /* letter-spacing: -0.09px; */
+  }
+
+  @media (max-width: 640px) {
+    p {
+      font-size: 13px;
+      line-height: 24px;
+      /* letter-spacing: -0.09px; */
+    }
+  }
+
+  .mono {
+    @apply font-medium;
+  }
 }

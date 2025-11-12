@@ -1,0 +1,213 @@
+---
+import RichTextParagraph from "./rich-text-paragraph.astro";
+import ImageSlider from "./ImageSlider";
+import type { CaseStudy } from "../constants/case_studies";
+import { CopyIcon } from "lucide-react";
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+---
+
+<script>
+  const copyEmailButton = document.querySelector("#copyEmail") as HTMLElement;
+  const successMessage = document.querySelector(
+    "#copySuccessMessage"
+  ) as HTMLElement;
+
+  if (copyEmailButton && successMessage) {
+    copyEmailButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText("dami@jointabs.com");
+
+        // Hide the copy icon and show success message
+        copyEmailButton.style.opacity = "0";
+        successMessage.style.display = "block";
+
+        setTimeout(() => {
+          copyEmailButton.style.opacity = "1";
+          successMessage.style.display = "none";
+        }, 2000);
+      } catch (err) {
+        console.error("Failed to copy email:", err);
+      }
+    });
+  }
+</script>
+
+<h4 class="mb-4 w-full max-w-180 sm:hidden">{caseStudy.pageTitle}</h4>
+<!-- Dynamic Sections -->
+{
+  caseStudy.sections.map((section) => {
+    const hideOnSmaller = section.hideOnSmallerScreen === true;
+    const hiddenClass = hideOnSmaller ? "hidden sm:block" : "";
+
+    if (section.type === "text") {
+      const sectionId = section.title
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/&/g, "and");
+      const showTitle = section.showTitle !== false;
+      return (
+        <div
+          id={sectionId}
+          class={`mb-8 relative max-w-180 w-full scroll-mt-8 ${hiddenClass}`}
+          data-section={sectionId}
+        >
+          {showTitle && <h2 class="mb-4">{section.title}</h2>}
+          <div class="space-y-2 sm:space-y-2">
+            {section.paragraphs.map((paragraph) => (
+              <RichTextParagraph paragraph={paragraph} />
+            ))}
+          </div>
+          {section.customHtml && (
+            <div class="mt-4" set:html={section.customHtml} />
+          )}
+        </div>
+      );
+    } else if (section.type === "image") {
+      return (
+        <div class={`mb-8 relative max-w-180 w-full ${hiddenClass}`}>
+          <img src={section.src} class="w-full rounded-lg" />
+          {section.customHtml && (
+            <div class="mt-4" set:html={section.customHtml} />
+          )}
+        </div>
+      );
+    } else if (section.type === "slider") {
+      return (
+        <div class={`mb-8 relative  ${hiddenClass}`}>
+          <ImageSlider images={section.images} client:load />
+          {section.customHtml && (
+            <div
+              class="mt-4 max-w-180 w-full mx-auto"
+              set:html={section.customHtml}
+            />
+          )}
+        </div>
+      );
+    } else if (section.type === "summary") {
+      return (
+        <div class={`mb-8 max-w-180 relative w-full ${hiddenClass}`}>
+          <div class="flex flex-col lg:flex-row gap-8 lg:gap-15">
+            <div class="flex-1 space-y-2">
+              <div>
+                <p class="text-xs">Role</p>
+                <p class="font-[200] text-dark-text">{section.role}</p>
+              </div>
+              <div>
+                <p class="text-xs">Responsibilities</p>
+                <p class="font-[200] text-dark-text">
+                  {section.responsibilities}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs">Deliverables</p>
+                <p class="font-[200] text-dark-text">
+                  {section.deliverables.join(", ")}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs">Timeline</p>
+                <p class="font-[200] text-dark-text">{section.timeline}</p>
+              </div>
+              {section.team.length > 0 && (
+                <div>
+                  <p class="text-xs">Team</p>
+                  <div class="flex flex-col mt-2 gap-2">
+                    {section.team.map((member) => (
+                      <div class="flex items-center gap-3">
+                        <img
+                          src={member.image}
+                          class="w-6 h-6 rounded-full object-cover"
+                        />
+                        <p class="font-[200]">
+                          <span class="text-dark-text font-[200]">
+                            {member.name}
+                          </span>{" "}
+                          / {member.role}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            {section.sideParagraphs.length > 0 && (
+              <div class="space-y-4 max-w-85">
+                {section.sideParagraphs.map((paragraph) => {
+                  const isObject =
+                    typeof paragraph === "object" && paragraph !== null;
+                  const isHidden =
+                    isObject &&
+                    "hidden" in paragraph &&
+                    paragraph.hidden === true;
+                  const paragraphContent =
+                    isObject && "content" in paragraph
+                      ? paragraph.content
+                      : (paragraph as string);
+                  const hiddenClass = isHidden ? "hidden sm:block" : "";
+
+                  return <p class={hiddenClass}>{paragraphContent}</p>;
+                })}
+                <p class="flex flex-wrap relative items-center gap-1.5">
+                  Let's set up a chat{" "}
+                  <span class="text-link font-normal">dami@jointabs.com</span>
+                  <button
+                    id="copyEmail"
+                    class="cursor-pointer transition-opacity hover:opacity-70 inline-flex items-center"
+                    aria-label="Copy email to clipboard"
+                  >
+                    <CopyIcon
+                      className="text-text"
+                      size={14}
+                      strokeWidth={2.5}
+                    />
+                  </button>
+                  <span
+                    id="copySuccessMessage"
+                    class="font-normal text-sm absolute -right-[65px] text-link"
+                    style="display: none;"
+                  >
+                    Yaay! Speak soon! 😄
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+          {section.customHtml && (
+            <div class="mt-4" set:html={section.customHtml} />
+          )}
+        </div>
+      );
+    } else if (section.type === "html") {
+      const maxWidthClass = section.maxWidth || "max-w-180";
+      return (
+        <div
+          class={`mb-8 relative ${maxWidthClass} w-full ${hiddenClass}`}
+          set:html={section.content}
+        />
+      );
+    }
+  })
+}
+<p class="sm:hidden">
+  👁️ For optimal viewing, please view this case study on a larger screen.
+</p>
+
+<!-- Notes Section -->
+{
+  caseStudy.notes.length > 0 && (
+    <div class="mt-20 max-w-180 w-full sm:mt-24 md:mt-32">
+      <ul class="space-y-8 sm:space-y-10">
+        {caseStudy.notes.map((note) => (
+          <li class="flex items-start">
+            <p class="text-soft">{note}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}

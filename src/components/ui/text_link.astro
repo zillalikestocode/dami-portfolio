@@ -1,0 +1,18 @@
+---
+import { SquareArrowOutUpRight } from "@lucide/astro";
+
+interface Props {
+  href: string;
+  text: string;
+}
+
+const { href, text } = Astro.props;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer" class="inline-flex gap-0.5 items-center"
+  >{text}<SquareArrowOutUpRight
+    class="dark:text-[#a3a3a3] text-[#00000066]"
+    size={12}
+    stroke-width={2.5}
+  /></a
+>

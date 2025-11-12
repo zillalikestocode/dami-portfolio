@@ -1,0 +1,241 @@
+---
+import "../styles/global.css";
+import Footer from "../components/footer.astro";
+import ThemeSwitcher from "../components/ui/theme_switcher";
+import Button from "../components/ui/button";
+import { ArrowLeft } from "@lucide/astro";
+
+interface Props {
+  title: string;
+  headerTitle?: string;
+  description?: string;
+  sections?: Array<{ title: string; id: string; scrollToTop?: boolean }>;
+}
+
+const { title, headerTitle, sections = [] } = Astro.props;
+const hasHeaderLeft = Astro.slots.has("header-left");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta property="og:title" content={title} />
+    <meta property="og:image" content="/link_preview.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:image" content="/link_preview.jpg" />
+    <!-- <ClientRouter /> -->
+    <script is:inline>
+      (function () {
+        function getTheme() {
+          if (
+            typeof localStorage !== "undefined" &&
+            localStorage.getItem("theme")
+          ) {
+            return localStorage.getItem("theme");
+          }
+          if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            return "dark";
+          }
+          return "light";
+        }
+
+        const theme = getTheme();
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body
+    class="px-7 root flex flex-col gap-6 m-auto py-[57px] sm:pt-20 sm:py-[140px]"
+  >
+    <div class="flex gap-40 w-full relative sm:w-fit m-auto">
+      <div class="min-w-[160px] hidden sm:block">
+        <div class="fixed">
+          <Button id="back-button">
+            <ArrowLeft size={18} stroke-width={2.5} />
+            Back
+          </Button>
+          <div>
+            <!-- section navigation -->
+            {
+              sections.length > 0 && (
+                <nav
+                  class=" h-fit mt-8 min-w-[200px] max-w-[240px]"
+                  id="section-nav"
+                >
+                  <ul class="space-y-1.5">
+                    {sections.map((section) => (
+                      <li>
+                        <a
+                          href={`#${section.id}`}
+                          data-section-link={section.id}
+                          data-scroll-to-top={section.scrollToTop ?? false}
+                          class="block text-sm leading-6 !text-soft section-link"
+                        >
+                          {section.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              )
+            }
+          </div>
+        </div>
+      </div>
+      <div class="w-full flex flex-col items-center m-auto">
+        <div class="flex w-full max-w-180 mb-4 items-center justify-between">
+          <h1 class="sm:block hidden">{headerTitle}</h1>
+          <div class="sm:hidden">
+            <Button id="back-button">
+              <ArrowLeft size={18} stroke-width={2.5} />
+              Back
+            </Button>
+          </div>
+          <div class="ml-auto">
+            <ThemeSwitcher client:load />
+          </div>
+        </div>
+        <slot />
+        <Footer />
+      </div>
+    </div>
+  </body>
+
+  <script>
+    import { inView, animate } from "motion";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const backButtons = document.querySelectorAll("#back-button");
+      backButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          window.history.back();
+        });
+      });
+
+      const elementsToAnimate = document.querySelectorAll(
+        "p, h1, h2, h3, h4, h5, h6, img, button, a, .input-fade"
+      );
+
+      elementsToAnimate.forEach((element) => {
+        inView(
+          element,
+          () => {
+            animate(
+              element,
+              { opacity: [0, 1], y: [7, 0] },
+              {
+                type: "tween",
+                delay: 0.15,
+                duration: 1,
+              }
+            );
+          },
+          { amount: 0.25 }
+        );
+      });
+
+      // Section navigation functionality
+      const sectionLinks = document.querySelectorAll(".section-link");
+      const sections = document.querySelectorAll("[data-section]");
+
+      // Smooth scroll to section when clicking navigation link
+      sectionLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const scrollToTop =
+            link.getAttribute("data-scroll-to-top") === "true";
+
+          if (scrollToTop) {
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+            // Update URL hash to remove it
+            //@ts-ignore
+            history.pushState(null, null, window.location.pathname);
+
+            // Clear active state from all links
+            sectionLinks.forEach((navLink) => {
+              navLink.classList.remove("!text-dark-text", "font-normal");
+              navLink.classList.add("!text-soft");
+            });
+          } else {
+            const targetId = link.getAttribute("data-section-link");
+            const targetSection = document.getElementById(targetId as string);
+
+            if (targetSection) {
+              targetSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+
+              // Update URL hash
+              //@ts-ignore
+              history.pushState(null, null, `#${targetId}`);
+            }
+          }
+        });
+      });
+
+      // Highlight active section on scroll
+      const observerOptions = {
+        root: null,
+        rootMargin: "-20% 0px -70% 0px",
+        threshold: 0,
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.getAttribute("data-section");
+
+            // Remove active class from all links
+            sectionLinks.forEach((link) => {
+              link.classList.remove("!text-dark-text", "font-normal");
+              link.classList.add("!text-soft");
+            });
+
+            // Add active class to current section link
+            const activeLink = document.querySelector(
+              `[data-section-link="${sectionId}"]`
+            );
+            if (activeLink) {
+              activeLink.classList.remove("!text-soft");
+              activeLink.classList.add("!text-dark-text", "font-normal");
+            }
+          }
+        });
+      }, observerOptions);
+
+      // Observe all sections
+      sections.forEach((section) => {
+        observer.observe(section);
+      });
+
+      // Handle initial hash in URL
+      if (window.location.hash) {
+        const targetId = window.location.hash.substring(1);
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) {
+          setTimeout(() => {
+            targetSection.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }, 100);
+        }
+      }
+    });
+  </script>
+</html>

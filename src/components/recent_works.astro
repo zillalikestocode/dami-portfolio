@@ -1,0 +1,134 @@
+---
+import { Clock1 } from "lucide-react";
+import { caseStudies, caseStudyHasContent } from "../constants/case_studies";
+import CaseStudyVideoHandler from "./CaseStudyVideoHandler";
+---
+
+<div class="sm:mt-[120px] mt-[60px]">
+  <h1 class="">Recent Work</h1>
+  <div class="flex flex-col gap-4">
+    {
+      caseStudies.map((caseStudy) => {
+        const hasContent = caseStudyHasContent(caseStudy);
+        const statusType = hasContent ? "protected" : "draft";
+        const status = hasContent ? "Password Required" : "Case Study In Draft";
+
+        return (
+          <div class="hover:opacity-60 transition-opacity cursor-pointer">
+            {hasContent ? (
+              <a
+                href={`/case-study/${caseStudy.slug}`}
+                class="border-b pt-4 border-border pb-6 last:border-b-0 case-study-item block"
+                data-case-study-id={caseStudy.id}
+                data-video={caseStudy.video || ""}
+              >
+                <div class="flex gap-2 items-center mb-2">
+                  <h4 class="">{caseStudy.title}</h4>
+                  <div
+                    class={`px-2.5 border border-border rounded-lg dark:bg-[#0000001A] py-1 pl-1.5 fade-in-element ${
+                      statusType === "draft" ? "bg-[#FFF3EB]" : "bg-[#FDEBFF]"
+                    }`}
+                  >
+                    <span
+                      class={`text-xs flex items-center gap-1 ${
+                        statusType === "draft"
+                          ? "text-[#A4521B] dark:text-[#FFC8A3]"
+                          : "text-[#620F6C] dark:text-[#F9C6FF]"
+                      }`}
+                    >
+                      {statusType === "draft" ? (
+                        <Clock1 size={14} strokeWidth={2.5} />
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <rect
+                              width="18"
+                              height="11"
+                              x="3"
+                              y="11"
+                              rx="2"
+                              ry="2"
+                            />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                        </>
+                      )}
+                      {status}
+                    </span>
+                  </div>
+                </div>
+                <h3 class="sm:mb-6 mb-4 uppercase">{caseStudy.listTitle}</h3>
+                <p class="">{caseStudy.description}</p>
+              </a>
+            ) : (
+              <div
+                class="border-b pt-4 border-border pb-6 last:border-b-0 case-study-item block"
+                data-case-study-id={caseStudy.id}
+                data-video={caseStudy.video || ""}
+              >
+                <div class="flex gap-2 items-center mb-2">
+                  <h4 class="">{caseStudy.title}</h4>
+                  <div
+                    class={`px-2.5 border border-border rounded-lg dark:bg-[#0000001A] py-1 pl-1.5 fade-in-element ${
+                      statusType === "draft" ? "bg-[#FFF3EB]" : "bg-[#FDEBFF]"
+                    }`}
+                  >
+                    <span
+                      class={`text-xs flex items-center gap-1 ${
+                        statusType === "draft"
+                          ? "text-[#A4521B] dark:text-[#FFC8A3]"
+                          : "text-[#620F6C] dark:text-[#F9C6FF]"
+                      }`}
+                    >
+                      {statusType === "draft" ? (
+                        <Clock1 size={14} strokeWidth={2.5} />
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <rect
+                              width="18"
+                              height="11"
+                              x="3"
+                              y="11"
+                              rx="2"
+                              ry="2"
+                            />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                        </>
+                      )}
+                      {status}
+                    </span>
+                  </div>
+                </div>
+                <h3 class="sm:mb-6 mb-4 uppercase">{caseStudy.listTitle}</h3>
+                <p class="">{caseStudy.description}</p>
+              </div>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+  <CaseStudyVideoHandler client:load />
+</div>

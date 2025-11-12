@@ -1,0 +1,102 @@
+---
+import BackHeader from "../components/back_header";
+import "../styles/global.css";
+import Footer from "../components/footer.astro";
+
+interface Props {
+  title: string;
+  headerTitle?: Element;
+  description?: string;
+}
+
+const { title, headerTitle } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta property="og:title" content={title} />
+    <meta property="og:image" content="/link_preview.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:image" content="/link_preview.jpg" />
+    {
+      title === "Dami Ojetunji" && (
+        <link
+          rel="preload"
+          href="/videos/mercurie.mp4"
+          as="video"
+          type="video/mp4"
+        />
+      )
+    }
+    <!-- <ClientRouter /> -->
+    <script is:inline>
+      // This script runs before the page renders to prevent theme flash
+      (function () {
+        function getTheme() {
+          if (
+            typeof localStorage !== "undefined" &&
+            localStorage.getItem("theme")
+          ) {
+            return localStorage.getItem("theme");
+          }
+          if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            return "dark";
+          }
+          return "light";
+        }
+
+        const theme = getTheme();
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body
+    class="min-h-screen px-7 root flex flex-col gap-16 m-auto py-10 sm:py-[57px]"
+  >
+    <BackHeader client:load />
+    <div class="max-w-[800px] m-auto">
+      <slot />
+      <Footer />
+    </div>
+  </body><script>
+    import { inView, animate } from "motion";
+
+    // Wait for DOM to be ready
+    document.addEventListener("DOMContentLoaded", () => {
+      // Select all elements to animate
+      const elementsToAnimate = document.querySelectorAll(
+        "p, h1, h2, h3, h4, h5, h6, img, button, a, .fade-in-element, .input-fade"
+      );
+
+      elementsToAnimate.forEach((element) => {
+        inView(
+          element,
+          () => {
+            animate(
+              element,
+              { opacity: [0, 1], y: [7, 0] },
+              {
+                type: "tween",
+                delay: 0.15,
+                duration: 1,
+              }
+            );
+          },
+          { amount: 0.25 }
+        );
+      });
+    });
+  </script>
+</html>
