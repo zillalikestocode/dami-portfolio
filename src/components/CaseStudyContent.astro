@@ -2,19 +2,37 @@
 import RichTextParagraph from "./rich-text-paragraph.astro";
 import ImageSlider from "./ImageSlider";
 import type { CaseStudy } from "../constants/case_studies";
-import { CopyIcon } from "lucide-react";
+import { caseStudies, caseStudyHasContent } from "../constants/case_studies";
+import { CopyIcon, LucideArrowRight } from "lucide-react";
+import Button from "./ui/button";
 
 interface Props {
   caseStudy: CaseStudy;
 }
 
 const { caseStudy } = Astro.props;
+
+// Find the next case study with content
+const currentIndex = caseStudies.findIndex(
+  (study) => study.slug === caseStudy.slug,
+);
+let nextCaseStudy: CaseStudy | undefined;
+
+// Look for the next case study with content, starting from the next index
+for (let i = 1; i <= caseStudies.length; i++) {
+  const nextIndex = (currentIndex + i) % caseStudies.length;
+  const candidate = caseStudies[nextIndex];
+  if (caseStudyHasContent(candidate)) {
+    nextCaseStudy = candidate;
+    break;
+  }
+}
 ---
 
 <script>
   const copyEmailButton = document.querySelector("#copyEmail") as HTMLElement;
   const successMessage = document.querySelector(
-    "#copySuccessMessage"
+    "#copySuccessMessage",
   ) as HTMLElement;
 
   if (copyEmailButton && successMessage) {
@@ -70,7 +88,21 @@ const { caseStudy } = Astro.props;
     } else if (section.type === "image") {
       return (
         <div class={`mb-8 relative max-w-180 w-full ${hiddenClass}`}>
-          <img src={section.src} class="w-full rounded-lg" />
+          <img
+            src={section.src}
+            class={`w-full rounded-lg ${section.darkSrc ? "dark:hidden" : ""}`}
+          />
+          {section.darkSrc && (
+            <img
+              src={section.darkSrc}
+              class="w-full rounded-lg hidden dark:block"
+            />
+          )}
+          {section.caption && (
+            <p class="mt-2 uppercase font-medium leading-4 tracking-[1.2px] text-[11px] text-soft">
+              {section.caption}
+            </p>
+          )}
           {section.customHtml && (
             <div class="mt-4" set:html={section.customHtml} />
           )}
@@ -79,7 +111,11 @@ const { caseStudy } = Astro.props;
     } else if (section.type === "slider") {
       return (
         <div class={`mb-8 relative  ${hiddenClass}`}>
-          <ImageSlider images={section.images} client:load />
+          <ImageSlider
+            id={Math.random().toString(36).substring(2, 15)}
+            images={section.images}
+            client:load
+          />
           {section.customHtml && (
             <div
               class="mt-4 max-w-180 w-full mx-auto"
@@ -103,12 +139,14 @@ const { caseStudy } = Astro.props;
                   {section.responsibilities}
                 </p>
               </div>
-              <div>
-                <p class="text-xs">Deliverables</p>
-                <p class="font-[200] text-dark-text">
-                  {section.deliverables.join(", ")}
-                </p>
-              </div>
+              {section.deliverables.length > 0 && (
+                <div>
+                  <p class="text-xs">Deliverables</p>
+                  <p class="font-[200] text-dark-text">
+                    {section.deliverables.join(", ")}
+                  </p>
+                </div>
+              )}
               <div>
                 <p class="text-xs">Timeline</p>
                 <p class="font-[200] text-dark-text">{section.timeline}</p>
@@ -152,28 +190,6 @@ const { caseStudy } = Astro.props;
 
                   return <p class={hiddenClass}>{paragraphContent}</p>;
                 })}
-                <p class="flex flex-wrap relative items-center gap-1.5">
-                  Let's set up a chat{" "}
-                  <span class="text-link font-normal">dami@jointabs.com</span>
-                  <button
-                    id="copyEmail"
-                    class="cursor-pointer transition-opacity hover:opacity-70 inline-flex items-center"
-                    aria-label="Copy email to clipboard"
-                  >
-                    <CopyIcon
-                      className="text-text"
-                      size={14}
-                      strokeWidth={2.5}
-                    />
-                  </button>
-                  <span
-                    id="copySuccessMessage"
-                    class="font-normal text-sm absolute -right-[65px] text-link"
-                    style="display: none;"
-                  >
-                    Yaay! Speak soon! 😄
-                  </span>
-                </p>
               </div>
             )}
           </div>
@@ -209,5 +225,19 @@ const { caseStudy } = Astro.props;
         ))}
       </ul>
     </div>
+  )
+}
+
+{
+  nextCaseStudy && (
+    <a
+      href={`/case-study/${nextCaseStudy.slug}`}
+      class="w-full mt-15 sm:mt-0 max-w-180"
+    >
+      <Button className="w-full justify-between items-center px-3 py-2.5 rounded-xl  leading-[21px]">
+        Read {nextCaseStudy.title}
+        <LucideArrowRight size={18} strokeWidth={2.5} />
+      </Button>
+    </a>
   )
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 
 interface VideoPreviewProps {
   videoSrc: string;
+  allVideos?: string[];
   isVisible: boolean;
   targetElement: HTMLElement | null;
 }
@@ -11,11 +12,11 @@ const OFFSET = 20;
 
 export default function VideoPreview({
   videoSrc,
+  allVideos = [],
   isVisible,
   targetElement,
 }: VideoPreviewProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,21 +64,30 @@ export default function VideoPreview({
       window.addEventListener("scroll", handleUpdate, true);
       window.addEventListener("resize", handleUpdate);
 
-      if (videoRef.current) {
-        videoRef.current.play().catch(() => {});
-      }
-
       return () => {
         window.removeEventListener("scroll", handleUpdate, true);
         window.removeEventListener("resize", handleUpdate);
       };
-    } else {
-      if (videoRef.current) {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
-      }
     }
   }, [isVisible, targetElement]);
+
+  useEffect(() => {
+    const videos = containerRef.current?.querySelectorAll("video");
+    videos?.forEach((video) => {
+      const src = video.getAttribute("src");
+      if (isVisible && src === videoSrc) {
+        video.style.display = "block";
+        video.play().catch(() => {});
+      } else {
+        video.style.display = "none";
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+  }, [isVisible, videoSrc, allVideos]);
+
+  const videosToRender =
+    allVideos.length > 0 ? allVideos : videoSrc ? [videoSrc] : [];
 
   return (
     <div
@@ -93,15 +103,18 @@ export default function VideoPreview({
         pointerEvents: "none",
       }}
     >
-      <video
-        ref={videoRef}
-        src={videoSrc}
-        className="w-full h-auto"
-        loop
-        muted
-        playsInline
-        preload="auto"
-      />
+      {videosToRender.map((src) => (
+        <video
+          key={src}
+          src={src}
+          className="w-full h-auto"
+          loop
+          muted
+          playsInline
+          preload="auto"
+          style={{ display: "none" }}
+        />
+      ))}
     </div>
   );
 }

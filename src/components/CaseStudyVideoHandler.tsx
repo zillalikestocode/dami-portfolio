@@ -10,7 +10,7 @@ export default function CaseStudyVideoHandler() {
     isVisible: boolean;
   }>({ src: "", isVisible: false });
   const [activeElement, setActiveElement] = useState<HTMLElement | null>(null);
-  const preloadedVideosRef = useRef<Map<string, HTMLVideoElement>>(new Map());
+  const [allVideos, setAllVideos] = useState<string[]>([]);
 
   useEffect(() => {
     function checkScreenSize() {
@@ -31,43 +31,16 @@ export default function CaseStudyVideoHandler() {
     }
 
     const caseStudyItems = document.querySelectorAll(".case-study-item");
-    const videosToPreload = new Set<string>();
+    const videosFound = new Set<string>();
 
     caseStudyItems.forEach((item) => {
       const videoSrc = item.getAttribute("data-video");
       if (videoSrc) {
-        videosToPreload.add(videoSrc);
+        videosFound.add(videoSrc);
       }
     });
 
-    videosToPreload.forEach((videoSrc) => {
-      if (!preloadedVideosRef.current.has(videoSrc)) {
-        const video = document.createElement("video");
-        video.src = videoSrc;
-        video.preload = "auto";
-        video.muted = true;
-        video.playsInline = true;
-        video.style.display = "none";
-        video.style.position = "absolute";
-        video.style.width = "1px";
-        video.style.height = "1px";
-        video.style.opacity = "0";
-        video.style.pointerEvents = "none";
-        document.body.appendChild(video);
-        preloadedVideosRef.current.set(videoSrc, video);
-
-        video.load();
-      }
-    });
-
-    return () => {
-      preloadedVideosRef.current.forEach((video) => {
-        if (video.parentNode) {
-          video.parentNode.removeChild(video);
-        }
-      });
-      preloadedVideosRef.current.clear();
-    };
+    setAllVideos(Array.from(videosFound));
   }, [isLargeScreen]);
 
   useEffect(() => {
@@ -110,6 +83,7 @@ export default function CaseStudyVideoHandler() {
   return (
     <VideoPreview
       videoSrc={activeVideo.src}
+      allVideos={allVideos}
       isVisible={activeVideo.isVisible}
       targetElement={activeElement}
     />

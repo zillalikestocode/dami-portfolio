@@ -53,7 +53,7 @@ export default function PasswordGate({ correctPassword }: PasswordGateProps) {
       <div className="space-y-2.5 flex justify-center flex-col w-full h-full max-w-md">
         <div className="space-y-1.5">
           <h4>Enter Password to continue</h4>
-          <p className="text-xs">
+          <p className="text-xs leading-5">
             This case study is not publicly available due to non-disclosure
             agreements. To request access, contact me for a password. Access is
             limited to recruiters and potential clients. Thank you for
@@ -104,11 +104,10 @@ export default function PasswordGate({ correctPassword }: PasswordGateProps) {
             Need access, request password{" "}
             <a
               href="mailto:dami@jointabs.com"
-              className="text-dark-text font-normal cursor-pointer sm:hidden"
+              className="text-dark-text font-normal cursor-pointer sm:!hidden"
             >
               reach out
             </a>
-            <span className="hidden sm:inline">reach out </span>
             <span
               className="hidden sm:inline text-dark-text font-normal cursor-pointer break-all"
               onClick={copyEmail}

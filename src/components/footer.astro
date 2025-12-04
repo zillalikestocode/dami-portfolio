@@ -1,9 +1,12 @@
 ---
 import Button from "./ui/button";
+
+const isCaseStudyPage = Astro.url.pathname.includes("case-study");
+const maxWidthClass = isCaseStudyPage ? "max-w-180" : "max-w-200";
 ---
 
 <footer
-  class="flex sm:flex-row flex-col justify-between mt-12 gap-3 sm:items-center"
+  class={`flex sm:flex-row flex-col justify-between mt-30 gap-3 w-full ${maxWidthClass} sm:items-center`}
 >
   <div class="">
     <p class="font-normal">© 2025 Dami Ojetunji. All Rights Reserved</p>

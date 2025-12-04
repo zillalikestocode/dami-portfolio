@@ -14,7 +14,7 @@ export default function Button(props: ButtonProps) {
   const { children, className, href, ...otherProps } = props;
 
   const baseClassName =
-    "px-2.5 cursor-pointer !text-dark-text flex gap-1.5 leading-5 text-sm py-2 bg-transparent border border-border rounded-4xl font-normal" +
+    "px-2.5 cursor-pointer dark:hover:!bg-[#FFFFFF0D] hover:!bg-white w-fit !text-dark-text flex gap-1.5 leading-5 text-sm py-2 bg-transparent border border-border rounded-4xl font-normal" +
     " " +
     className;
 

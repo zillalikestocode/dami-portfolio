@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, A11y } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -11,23 +11,23 @@ import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
 
 export interface SlideImage {
   src: string;
+  darkSrc?: string;
   alt: string;
   caption?: string;
 }
 
 interface ImageSliderProps {
   images: SlideImage[];
+  id: string;
   className?: string;
 }
 
 const ImageSlider: React.FC<ImageSliderProps> = ({
   images,
+  id,
   className = "",
 }) => {
   const swiperRef = useRef<SwiperType | null>(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
   const handlePrevious = () => {
     swiperRef.current?.slidePrev();
   };
@@ -36,17 +36,26 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
     swiperRef.current?.slideNext();
   };
 
+  useEffect(() => {
+    if (swiperRef.current) {
+    }
+  }, []);
+
+  const prevButtonClass = `slider-prev-${id}`;
+  const nextButtonClass = `slider-next-${id}`;
+
   return (
     <div className={`image-slider-wrapper ${className}`}>
       <div className="slider-container">
         {/* Previous Button */}
         <button
-          onClick={handlePrevious}
-          className={`slider-nav-button slider-nav-prev ${isBeginning ? "disabled" : ""}`}
+          // onClick={handlePrevious}
+          className={`slider-nav-button ${prevButtonClass} !py-2 !px-2.5 slider-nav-prev dark:hover:!bg-[#FFFFFF0D] hover:!bg-white dark:disabled:bg-transparent disabled:bg-[#EBEBEB] disabled:!border-0 disabled:!text-soft !text-dark-text dark:disabled:!border !gap-1.5 !text-sm !leading-5`}
           aria-label="Previous slide"
-          disabled={isBeginning}
+          // disabled={isBeginning}
         >
-          <LucideArrowLeft size={18} strokeWidth={2.5} color="var(--color-dark-text)" />
+          <LucideArrowLeft className="!w-[18px] !h-[18px]" strokeWidth={2.5} />
+          Back
         </button>
 
         {/* Swiper */}
@@ -55,16 +64,22 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
             modules={[Navigation, A11y]}
             spaceBetween={30}
             slidesPerView={1}
+            navigation={{
+              nextEl: `.${nextButtonClass}`,
+              prevEl: `.${prevButtonClass}`,
+            }}
             pagination={{ clickable: true }}
             autoHeight={true}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
-              setIsBeginning(swiper.isBeginning);
-              setIsEnd(swiper.isEnd);
+              // setTimeout(() => {
+              //   setIsBeginning(swiper.isBeginning);
+              //   setIsEnd(swiper.isEnd);
+              // }, 0);
             }}
             onSlideChange={(swiper) => {
-              setIsBeginning(swiper.isBeginning);
-              setIsEnd(swiper.isEnd);
+              // setIsBeginning(swiper.isBeginning);
+              // setIsEnd(swiper.isEnd);
             }}
             className="rounded-lg"
           >
@@ -74,8 +89,15 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-auto object-cover rounded-lg"
+                    className={`w-full h-auto object-cover rounded-lg ${image.darkSrc ? "dark:hidden" : ""}`}
                   />
+                  {image.darkSrc && (
+                    <img
+                      src={image.darkSrc}
+                      alt={image.alt}
+                      className="w-full h-auto object-cover rounded-lg hidden dark:block"
+                    />
+                  )}
                   {image.caption && (
                     <p className="mt-2 uppercase font-medium leading-4 tracking-[1.2px] text-[11px] text-soft">
                       {image.caption}
@@ -89,12 +111,18 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
 
         {/* Next Button */}
         <button
-          onClick={handleNext}
-          className={`slider-nav-button slider-nav-next ${isEnd ? "disabled" : ""}`}
+          // onClick={handleNext}
+          className={`slider-nav-button slider-nav-next !py-2 !px-2.5 !gap-1.5 !text-sm !leading-5 !text-dark-text dark:hover:!bg-[#FFFFFF0D] hover:!bg-white dark:disabled:!border dark:disabled:bg-transparent disabled:bg-[#EBEBEB] disabled:!border-0 disabled:!text-soft ${nextButtonClass}`}
           aria-label="Next slide"
-          disabled={isEnd}
+          // disabled={isEnd}
         >
-          <LucideArrowRight size={18} strokeWidth={2.5} color="var(--color-dark-text)" />
+          Next
+          <LucideArrowRight
+            // size={18}
+            className="!w-[18px] !h-[18px]"
+            strokeWidth={2.5}
+            // color="var(--color-dark-text)"
+          />
         </button>
       </div>
 

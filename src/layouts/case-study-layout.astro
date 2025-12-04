@@ -33,21 +33,25 @@ const hasHeaderLeft = Astro.slots.has("header-left");
     <!-- <ClientRouter /> -->
     <script is:inline>
       (function () {
-        function getTheme() {
-          if (
-            typeof localStorage !== "undefined" &&
-            localStorage.getItem("theme")
-          ) {
-            return localStorage.getItem("theme");
+        function getResolvedTheme() {
+          const storedTheme =
+            typeof localStorage !== "undefined"
+              ? localStorage.getItem("theme")
+              : null;
+
+          const userPreference = storedTheme || "system";
+
+          if (userPreference === "system") {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
           }
-          if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            return "dark";
-          }
-          return "light";
+
+          return userPreference;
         }
 
-        const theme = getTheme();
-        if (theme === "dark") {
+        const resolvedTheme = getResolvedTheme();
+        if (resolvedTheme === "dark") {
           document.documentElement.classList.add("dark");
         } else {
           document.documentElement.classList.remove("dark");
@@ -56,7 +60,7 @@ const hasHeaderLeft = Astro.slots.has("header-left");
     </script>
   </head>
   <body
-    class="px-7 root flex flex-col gap-6 m-auto py-[57px] sm:pt-20 sm:py-[140px]"
+    class="px-7 root flex flex-col gap-6 m-auto py-[38px] sm:pt-20 sm:py-[140px]"
   >
     <div class="flex gap-40 w-full relative sm:w-fit m-auto">
       <div class="min-w-[160px] hidden sm:block">
@@ -119,12 +123,12 @@ const hasHeaderLeft = Astro.slots.has("header-left");
       const backButtons = document.querySelectorAll("#back-button");
       backButtons.forEach((button) => {
         button.addEventListener("click", () => {
-          window.history.back();
+          window.location.href = "/";
         });
       });
 
       const elementsToAnimate = document.querySelectorAll(
-        "p, h1, h2, h3, h4, h5, h6, img, button, a, .input-fade"
+        "p, h1, h2, h3, h4, h5, h6, img, button, a, .input-fade",
       );
 
       elementsToAnimate.forEach((element) => {
@@ -138,10 +142,10 @@ const hasHeaderLeft = Astro.slots.has("header-left");
                 type: "tween",
                 delay: 0.15,
                 duration: 1,
-              }
+              },
             );
           },
-          { amount: 0.25 }
+          { amount: 0.25 },
         );
       });
 
@@ -208,7 +212,7 @@ const hasHeaderLeft = Astro.slots.has("header-left");
 
             // Add active class to current section link
             const activeLink = document.querySelector(
-              `[data-section-link="${sectionId}"]`
+              `[data-section-link="${sectionId}"]`,
             );
             if (activeLink) {
               activeLink.classList.remove("!text-soft");
