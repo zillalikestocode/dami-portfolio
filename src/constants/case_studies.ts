@@ -284,7 +284,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     id: "5",
-    slug: "Financial-AI-Platform",
+    slug: "AI-Financial-Platform",
     title: "Financial AI Startup",
     pageTitle: "Designing 0-1 conversational AI-platform for 150k+ investors",
     listTitle: "CHAT GPT BUT FOR THE STOCK MARKET",
