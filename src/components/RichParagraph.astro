@@ -1,0 +1,24 @@
+---
+import TextLink from "./ui/text_link.astro";
+import { parseInlineLinks } from "../lib/rich-text";
+
+interface Props {
+  text: string;
+  class?: string;
+}
+
+const { text, class: className } = Astro.props;
+const segments = parseInlineLinks(text);
+---
+
+<p class={className}>
+  {
+    segments.map((segment) =>
+      segment.type === "text" ? (
+        segment.content
+      ) : (
+        <TextLink href={segment.href} text={segment.text} />
+      ),
+    )
+  }
+</p>

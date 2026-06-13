@@ -1,31 +1,20 @@
 ---
-import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import "../styles/global.css";
-import { ArrowSquareOutIcon } from "@phosphor-icons/react/dist/ssr";
 import Layout from "../layouts/layout.astro";
-import TextLink from "../components/ui/text_link.astro";
 import RecentWorks from "../components/recent_works.astro";
+import RichParagraph from "../components/RichParagraph.astro";
+import { homePage } from "../constants/pages";
 ---
 
 <Layout title="Dami Ojetunji">
   <main>
-    <img src="/dami.png" class="w-[60px] rounded-full mb-10 aspect-square" />
+    <img
+      src={homePage.avatar}
+      class="w-[60px] rounded-full mb-10 aspect-square"
+    />
     <div class="flex flex-col gap-6 sm:gap-8">
-      <h1>👋🏾 Hiyaa! I’m Dami</h1>
-      <p>
-        Software designer and founder based in Lagos, building <TextLink
-          text="Tabs"
-          href="https://www.jointabs.com"
-        /> a curated library for discovering and learning from African digital products.
-        Focused on designing functional, human-centred products that solve real usability
-        challenges through experimentation and iterative learning.
-      </p>
-      <p>
-        Currently designing solutions that enable businesses and startups
-        discover, manage and pay for software tools and services in their local
-        currencies; and owning and maintaining an internal design system to
-        drive efficiency and scalability across a cross functional team.
-      </p>
+      <h1>{homePage.heading}</h1>
+      {homePage.paragraphs.map((paragraph) => <RichParagraph text={paragraph} />)}
     </div>
 
     <RecentWorks />

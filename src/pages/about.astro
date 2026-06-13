@@ -1,120 +1,75 @@
 ---
-import Button from "../components/ui/button";
-import TextLink from "../components/ui/text_link.astro";
 import Layout from "../layouts/layout.astro";
-import { SquareArrowOutUpRight } from "@lucide/astro";
 import ImageMarquee from "../components/ImageMarquee";
-
-const experiences = [
-  { company: "Mercurie", role: "Product Designer" },
-  { company: "Tabs", role: "Founder & Design Lead" },
-  { company: "Tempo AI (YC S23)", role: "Founding Product Designer" },
-  { company: "Stealth AI Startup", role: "Founding Product Designer" },
-  { company: "Luupli", role: "Senior Product Designer" },
-  { company: "Vegeel", role: "Product Design Lead" },
-  { company: "Freelance", role: "Product Designer" },
-];
+import RichParagraph from "../components/RichParagraph.astro";
+import { aboutPage } from "../constants/pages";
 ---
 
 <script>
   import { animate } from "motion";
 
   const pulse = document.getElementById("pulse");
-  const available = document.getElementById("available")!;
+  const available = document.getElementById("available");
 
-  document.addEventListener("mousemove", (e) => {
-    available.style.left = `${e.clientX + 15}px`;
-    available.style.top = `${e.clientY + 10}px`;
-    available.style.position = "fixed";
-  });
-  pulse?.addEventListener("mouseenter", () => {
-    animate(available, { opacity: 1 }, { duration: 0.3 });
-  });
-  pulse?.addEventListener("mouseleave", () => {
-    animate(available, { opacity: 0 }, { duration: 0.1 });
-  });
+  if (pulse && available) {
+    document.addEventListener("mousemove", (e) => {
+      available.style.left = `${e.clientX + 15}px`;
+      available.style.top = `${e.clientY + 10}px`;
+      available.style.position = "fixed";
+    });
+    pulse.addEventListener("mouseenter", () => {
+      animate(available, { opacity: 1 }, { duration: 0.3 });
+    });
+    pulse.addEventListener("mouseleave", () => {
+      animate(available, { opacity: 0 }, { duration: 0.1 });
+    });
+  }
 </script>
 
 <Layout title="About">
   <main>
     <div class="mb-6">
       <div class="flex items-center gap-3">
-        <h1>Oluwadamilola ‘Dami’ Ojetunji</h1>
-        <div
-          id="pulse"
-          class="relative cursor-pointer z-20 flex items-center justify-center"
-        >
-          <div
-            class="absolute w-4 bg-[#E0FAEC] aspect-square rounded-full -z-10"
-          >
-          </div>
-          <div class="w-2.5 aspect-square bg-[#1FC16B] rounded-full"></div>
-        </div>
-        <div
-          id="available"
-          class="px-2.5 absolute opacity-0 p-1 rounded-b-xl shadow-xl shadow-[#00000010] rounded-tr-xl rounded-tl-xs bg-[#FDEBFF] dark:bg-[#272727] border-border border"
-        >
-          <span class="text-[#620F6C] dark:text-[#F9C6FF] text-sm"
-            >Available for New Opportunities</span
-          >
-        </div>
+        <h1>{aboutPage.name}</h1>
+        {
+          aboutPage.availableForWork && (
+            <>
+              <div
+                id="pulse"
+                class="relative cursor-pointer z-20 flex items-center justify-center"
+              >
+                <div class="absolute w-4 bg-[#E0FAEC] aspect-square rounded-full -z-10" />
+                <div class="w-2.5 aspect-square bg-[#1FC16B] rounded-full" />
+              </div>
+              <div
+                id="available"
+                class="px-2.5 absolute opacity-0 p-1 rounded-b-xl shadow-xl shadow-[#00000010] rounded-tr-xl rounded-tl-xs bg-[#FDEBFF] dark:bg-[#272727] border-border border"
+              >
+                <span class="text-[#620F6C] dark:text-[#F9C6FF] text-sm">
+                  {aboutPage.availabilityLabel}
+                </span>
+              </div>
+            </>
+          )
+        }
       </div>
-      <p>
-        Architect-turned-product designer, Founder, Community builder,
-        Traveller, Tennis player & Plant mom.
-      </p>
+      <p>{aboutPage.tagline}</p>
     </div>
-    <div
-      class="overflow-hidden h-[340px] sm:mt-6 mt-4 sm:h-[600px] rounded-2xl"
-    >
+    <div class="overflow-hidden h-[340px] sm:mt-6 mt-4 sm:h-[600px] rounded-2xl">
       <img
-        src="/dami-ojetunji.jpg"
+        src={aboutPage.image}
         class="rounded-2xl object-cover h-[600px] object-[55%_10%] -translate-y-[50px] sm:translate-y-0 sm:h-[600px] sm:object-[55%_0%] w-full"
         alt=""
       />
     </div>
     <div class="mt-5 flex flex-col gap-8">
-      <p>
-        I’m genuinely fascinated by how things, people and communities work, why
-        and how they work the way they do. This curiosity has been my north star
-        through making key decisions in my design processes, solving complex and
-        ambiguous problems, considering uniques contexts and nuances that could
-        influence design decisions. all of which has guided me to consistently
-        find the right solutions for the right people while scaling the company,
-        users and the market at large for the last 5 years.
-      </p>
-      <p>
-        I've done this as a founding product designer at teams like <TextLink
-          href="https://ng.linkedin.com/company/vegeel"
-          text="Vegeel"
-        /> and <TextLink href="https://www.ycombinator.com/companies/tempo-2" text="Tempo AI (YC SC23)" /> and as a senior product
-        designer at <TextLink href="https://apps.apple.com/ng/app/luupli/id6463861554" text="Luupli" /> and a myriad of other global
-        teams across industries like AI, HealthTech, Cybersecurity, B2B, B2C, E-commerce,
-        Fintech and more.
-      </p>
-      <p>
-        On the side, I'm building <TextLink href="https://www.jointabs.com" text="Tabs" /> aka. 'Mobbin for
-        Africa'. Tabs is a thoughtfully curated library of African digital products.
-        It helps product designers, engineers, and product teams see how real products
-        in Africa are solving design and usability challenges. Instead of relying
-        on references from outside contexts, Tabs showcases screenshots categorised
-        by industries, user flows, and features from African products, think onboarding,
-        payment flows, error states, mobile screens dashboards, and more.
-      </p>
-      <p>
-        To me, design is more than just ‘how it looks’ or ‘how it works’ but,
-        ‘who it works for’. Design considers long term impact on a business, the
-        users and non-users, and society at large. It has the power to include
-        and exclude and has it’s consequences. it’s important to me to do the
-        best I can from my little corner of the world to make it easier,
-        thoughtful, beneficial, inclusive, and truly human-centred.
-      </p>
+      {aboutPage.paragraphs.map((paragraph) => <RichParagraph text={paragraph} />)}
     </div>
     <div class="mt-8">
-      <h1 class="mb-4 text-[15px]">Experience (2020 - Present)</h1>
+      <h1 class="mb-4 text-[15px]">{aboutPage.experienceTitle}</h1>
       <div class="flex flex-col mt-4 gap-1">
         {
-          experiences.map((experience) => (
+          aboutPage.experiences.map((experience) => (
             <div class="flex justify-between items-center py-2 group">
               <p class="group-hover:font-normal">{experience.company}</p>
               <p class="group-hover:font-normal">{experience.role}</p>
@@ -124,31 +79,11 @@ const experiences = [
       </div>
     </div>
     <div class="mt-8">
-      <h1 class="mb-4 text-[15px]">Beyond the day-to-day</h1>
-      <p>
-        I also dedicate time to mentoring designers at all stages of their
-        careers on platforms like <TextLink href="https://adplist.org/mentors/dami-ojetunji" text="ADPList" /> and through
-        NGOs like <TextLink href="https://www.designchics.com/" text="Design Chics" /> , where I help train the
-        next generation of people in design including underrepresented groups. I
-        provide guidance on launching successful careers, how to thrive and remain
-        relevant in the industry, refining design processes, working on cross-functional
-        teams, and more. I also contribute to open-source and speak at industry events.
-        When I'm not doing all that, you'll find me rewatching the office for the
-        millionth time, annotating a new read, at a local rave, an art exhibition,
-        or on the tennis court.
-      </p>
+      <h1 class="mb-4 text-[15px]">{aboutPage.beyondTitle}</h1>
+      {aboutPage.beyondParagraphs.map((paragraph) => <RichParagraph text={paragraph} />)}
     </div>
     <div class="mt-[86px] mb-40">
-      <ImageMarquee
-        images={[
-          "/slider1.jpg",
-          "/slider2.png",
-          "/slider3.jpg",
-          "/slider4.jpg",
-          "/slider5.jpg",
-        ]}
-        client:load
-      />
+      <ImageMarquee images={aboutPage.marqueeImages} client:load />
     </div>
   </main>
 </Layout>
